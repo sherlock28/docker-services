@@ -1,0 +1,49 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/access.log:/var/log/nginx/access.log
+    depends_on:
+      - apache1
+      - apache2
+      - apache3
+    networks:
+      - app-network
+
+  apache1:
+    image: httpd:latest
+    container_name: apache1
+    volumes:
+      - ./apache1/index.html:/usr/local/apache2/htdocs/index.html
+    networks:
+      app-network:
+        ipv4_address: 192.168.1.101
+
+  apache2:
+    image: httpd:latest
+    container_name: apache2
+    volumes:
+      - ./apache2/index.html:/usr/local/apache2/htdocs/index.html
+    networks:
+      app-network:
+        ipv4_address: 192.168.1.102
+
+  apache3:
+    image: httpd:latest
+    container_name: apache3
+    volumes:
+      - ./apache3/index.html:/usr/local/apache2/htdocs/index.html
+    networks:
+      app-network:
+        ipv4_address: 192.168.1.103
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
